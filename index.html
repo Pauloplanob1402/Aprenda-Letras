@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Learn Letters — Match Letters — 30 Levels!</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Learn Letters">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ═══════════ TELA DE MENU ═══════════ -->
+<div id="screen-menu" class="screen active">
+  <div class="menu-bg">
+    <div class="floating-letter" style="--d:0s;--x:10%;--y:15%;--r:-15deg;--c:#FF6B6B">A</div>
+    <div class="floating-letter" style="--d:0.5s;--x:80%;--y:10%;--r:20deg;--c:#4ECDC4">B</div>
+    <div class="floating-letter" style="--d:1s;--x:25%;--y:75%;--r:-8deg;--c:#FFE66D">C</div>
+    <div class="floating-letter" style="--d:1.5s;--x:70%;--y:70%;--r:12deg;--c:#A8E6CF">D</div>
+    <div class="floating-letter" style="--d:2s;--x:50%;--y:85%;--r:-20deg;--c:#FF8B94">E</div>
+    <div class="floating-letter" style="--d:0.3s;--x:5%;--y:50%;--r:25deg;--c:#B5EAD7">F</div>
+    <div class="floating-letter" style="--d:0.8s;--x:90%;--y:45%;--r:-10deg;--c:#FFDAC1">G</div>
+  </div>
+  <div class="menu-content">
+    <div class="logo">
+      <span class="logo-letra" style="color:#FF6B6B">L</span><span class="logo-letra" style="color:#FFE66D">e</span><span class="logo-letra" style="color:#4ECDC4">a</span><span class="logo-letra" style="color:#A8E6CF">r</span><span class="logo-letra" style="color:#FF8B94">n</span>
+      <br>
+      <span class="logo-letra" style="color:#FB923C">L</span><span class="logo-letra" style="color:#34D399">e</span><span class="logo-letra" style="color:#60A5FA">t</span><span class="logo-letra" style="color:#C084FC">t</span><span class="logo-letra" style="color:#F472B6">e</span><span class="logo-letra" style="color:#FCD34D">r</span><span class="logo-letra" style="color:#4ECDC4">s</span>
+    </div>
+    <p class="menu-sub">Match the letters — clear the board!</p>
+    <button class="btn-primary" onclick="showLevelSelect()">🎮 Jogar</button>
+    <button class="btn-secondary" onclick="showHowTo()">❓ Como Jogar</button>
+  </div>
+</div>
+
+<!-- ═══════════ TELA DE COMO JOGAR ═══════════ -->
+<div id="screen-howto" class="screen">
+  <div class="howto-container">
+    <h2>Como Jogar</h2>
+    <div class="howto-steps">
+      <div class="step"><div class="step-icon">👆</div><p>Toque em uma peça para selecioná-la</p></div>
+      <div class="step"><div class="step-icon">🔤</div><p>Selecione outra peça com a <strong>mesma letra</strong></p></div>
+      <div class="step"><div class="step-icon">🔓</div><p>As peças precisam estar <strong>livres</strong> (sem nada em cima)</p></div>
+      <div class="step"><div class="step-icon">✨</div><p>O par some! Limpe todas as peças para vencer!</p></div>
+      <div class="step"><div class="step-icon">💡</div><p>Use dicas se travar — mas economize!</p></div>
+    </div>
+    <button class="btn-primary" onclick="showMenu()">← Voltar</button>
+  </div>
+</div>
+
+<!-- ═══════════ TELA DE SELEÇÃO DE NÍVEL ═══════════ -->
+<div id="screen-levels" class="screen">
+  <div class="levels-header">
+    <button class="btn-back" onclick="showMenu()">←</button>
+    <h2>Escolha o Nível</h2>
+  </div>
+  <div class="levels-grid" id="levels-grid"></div>
+</div>
+
+<!-- ═══════════ TELA DO JOGO ═══════════ -->
+<div id="screen-game" class="screen">
+  <div class="game-header">
+    <button class="btn-back" onclick="confirmBack()">←</button>
+    <div class="game-info">
+      <span class="level-badge" id="level-badge">Nível 1</span>
+      <span class="score-display" id="score-display">⭐ 0</span>
+    </div>
+    <div class="game-actions">
+      <button class="btn-hint" id="btn-hint" onclick="useHint()">💡 <span id="hint-count">3</span></button>
+      <button class="btn-shuffle" onclick="shuffleFree()">🔀</button>
+      <button class="btn-shuffle" id="btn-mute" onclick="SoundEngine.toggleMute()">🔊</button>
+    </div>
+  </div>
+
+  <div class="timer-bar-wrap">
+    <div class="timer-bar" id="timer-bar"></div>
+  </div>
+
+  <div class="board-container">
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="game-footer">
+    <span id="pairs-left">Pares: 0</span>
+    <span id="moves-count">Movimentos: 0</span>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL DE VITÓRIA ═══════════ -->
+<div id="modal-win" class="modal hidden">
+  <div class="modal-box win-box">
+    <div class="win-emoji">🎉</div>
+    <h2>Parabéns!</h2>
+    <div class="stars-display" id="stars-display"></div>
+    <p id="win-message"></p>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="nextLevel()">Próximo Nível →</button>
+      <button class="btn-secondary" onclick="restartLevel()">🔄 Repetir</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL DE DERROTA ═══════════ -->
+<div id="modal-lose" class="modal hidden">
+  <div class="modal-box lose-box">
+    <div class="win-emoji">😅</div>
+    <h2>Sem movimentos!</h2>
+    <p>Não há mais pares disponíveis.</p>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="restartLevel()">🔄 Tentar Novamente</button>
+      <button class="btn-secondary" onclick="showLevelSelect()">📋 Níveis</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL DE CONFIRMAÇÃO ═══════════ -->
+<div id="modal-confirm" class="modal hidden">
+  <div class="modal-box">
+    <h2>Sair do nível?</h2>
+    <p>Seu progresso será perdido.</p>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="goToLevels()">Sair</button>
+      <button class="btn-secondary" onclick="closeModal('modal-confirm')">Continuar</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/levels.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/game.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("/sw.js")
+      .then(function(r) { console.log("SW registrado:", r.scope); })
+      .catch(function(e) { console.log("SW erro:", e); });
+  });
+}
+</script>
+</body>
+</html>
