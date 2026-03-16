@@ -1,21 +1,22 @@
 // ═══════════════════════════════════════════════
 //  Learn Letters — Service Worker (offline support)
+//  Corrigido para GitHub Pages subdiretório
 // ═══════════════════════════════════════════════
-const CACHE = 'learn-letters-v2';
+const CACHE   = 'learn-letters-v3';
+const BASE    = '/Aprenda-Letras';
 
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/css/style.css',
-  '/js/levels.js',
-  '/js/sound.js',
-  '/js/game.js',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
+  BASE + '/',
+  BASE + '/index.html',
+  BASE + '/manifest.json',
+  BASE + '/css/style.css',
+  BASE + '/js/levels.js',
+  BASE + '/js/sound.js',
+  BASE + '/js/game.js',
+  BASE + '/icons/icon-192.png',
+  BASE + '/icons/icon-512.png',
 ];
 
-// Instala e cacheia todos os arquivos
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(CACHE).then(function(cache) {
@@ -25,7 +26,6 @@ self.addEventListener('install', function(e) {
   self.skipWaiting();
 });
 
-// Limpa caches antigos
 self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
@@ -38,12 +38,10 @@ self.addEventListener('activate', function(e) {
   self.clients.claim();
 });
 
-// Serve do cache primeiro, depois tenta rede
 self.addEventListener('fetch', function(e) {
   e.respondWith(
     caches.match(e.request).then(function(cached) {
       return cached || fetch(e.request).then(function(response) {
-        // Cacheia novas requisições dinamicamente
         var clone = response.clone();
         caches.open(CACHE).then(function(cache) {
           cache.put(e.request, clone);
@@ -51,8 +49,7 @@ self.addEventListener('fetch', function(e) {
         return response;
       });
     }).catch(function() {
-      // Offline e não está no cache — retorna index.html
-      return caches.match('/index.html');
+      return caches.match(BASE + '/index.html');
     })
   );
 });
